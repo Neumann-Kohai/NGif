@@ -13,26 +13,28 @@ namespace Example
 		{
 			/* create Gif */
 			//you should replace filepath
-			String [] imageFilePaths = new String[]{"c:\\01.png","c:\\02.png","c:\\03.png"}; 
-			String outputFilePath = "c:\\test.gif";
+			string path = Directory.GetCurrentDirectory() + "\\..\\..\\..";
+            path = Path.GetFullPath(path);
+			String [] imageFilePaths = new String[]{ path + "\\Res\\01.png", path +"\\Res\\02.png", path + "\\Res\\03.png" }; 
+			String outputFilePath = path + "\\Res\\test.gif";
 			AnimatedGifEncoder e = new AnimatedGifEncoder();
-            
-            // read file as memorystream
-		    byte[] fileBytes = File.ReadAllBytes(outputFilePath);
-            MemoryStream memStream = new MemoryStream(fileBytes);
+
+			// read file as memorystream
+			MemoryStream memStream = new MemoryStream();
             e.Start(memStream);
 			e.SetDelay(500);
 			//-1:no repeat,0:always repeat
 			e.SetRepeat(0);
-			for (int i = 0, count = imageFilePaths.Length; i < count; i++ ) 
+			foreach(var imageFilePath in imageFilePaths)
 			{
-				e.AddFrame( Image.FromFile( imageFilePaths[i] ) );
+				e.AddFrame( Image.FromFile(imageFilePath) );
 			}
 			e.Finish();
+			File.WriteAllBytes(outputFilePath, memStream.ToArray());
 			/* extract Gif */
-			string outputPath = "c:\\";
+			string outputPath = path;
 			GifDecoder gifDecoder = new GifDecoder();
-			gifDecoder.Read( "c:\\test.gif" );
+			gifDecoder.Read( path + "\\Res\\test.gif");
 			for ( int i = 0, count = gifDecoder.GetFrameCount(); i < count; i++ ) 
 			{
 				Image frame = gifDecoder.GetFrame( i );  // frame i
