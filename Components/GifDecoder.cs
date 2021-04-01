@@ -71,9 +71,9 @@ namespace Gif.Components
 		protected int gctSize; // size of global color table
 		protected int loopCount = 1; // iterations; 0 = repeat forever
 
-		protected int[] gct; // global color table
-		protected int[] lct; // local color table
-		protected int[] act; // active color table
+		protected uint[] gct; // global color table
+		protected uint[] lct; // local color table
+		protected uint[] act; // active color table
 
 		protected int bgIndex; // background color index
 		protected int bgColor; // background color
@@ -307,7 +307,7 @@ namespace Gif.Components
 					{
 						// map color and insert in destination
 						int index = ((int) pixels[sx++]) & 0xff;
-						int c = act[index];
+						int c = (int)act[index];
 						if (c != 0) 
 						{
 							dest[dx] = c;
@@ -619,10 +619,10 @@ namespace Gif.Components
 		 * @param ncolors int number of colors to read
 		 * @return int array containing 256 colors (packed ARGB with full alpha)
 		 */
-		protected int[] ReadColorTable(int ncolors) 
+		protected uint[] ReadColorTable(int ncolors) 
 		{
 			int nbytes = 3 * ncolors;
-			int[] tab = null;
+			uint[] tab = null;
 			byte[] c = new byte[nbytes];
 			int n = 0;
 			try 
@@ -638,15 +638,15 @@ namespace Gif.Components
 			} 
 			else 
 			{
-				tab = new int[256]; // max size to avoid bounds checks
+				tab = new uint[256]; // max size to avoid bounds checks
 				int i = 0;
 				int j = 0;
 				while (i < ncolors) 
 				{
-					int r = ((int) c[j++]) & 0xff;
-					int g = ((int) c[j++]) & 0xff;
-					int b = ((int) c[j++]) & 0xff;
-					tab[i++] = (int) (0xff000000 | (r << 16) | (g << 8) | b );
+					uint r = ((uint) c[j++]) & 0xff;
+					uint g = ((uint) c[j++]) & 0xff;
+					uint b = ((uint) c[j++]) & 0xff;
+					tab[i++] = (uint) (0xff000000 | (r << 16) | (g << 8) | b );
 				}
 			}
 			return tab;
@@ -750,7 +750,7 @@ namespace Gif.Components
 			if (gctFlag && !Error()) 
 			{
 				gct = ReadColorTable(gctSize);
-				bgColor = gct[bgIndex];
+				bgColor = (int)gct[bgIndex];
 			}
 		}
 
@@ -785,7 +785,7 @@ namespace Gif.Components
 			int save = 0;
 			if (transparency) 
 			{
-				save = act[transIndex];
+				save = (int)act[transIndex];
 				act[transIndex] = 0; // set transparent color if specified
 			}
 
@@ -815,7 +815,7 @@ namespace Gif.Components
 
 			if (transparency) 
 			{
-				act[transIndex] = save;
+				act[transIndex] = (uint)save;
 			}
 			ResetFrame();
 
